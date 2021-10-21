@@ -1,23 +1,19 @@
-import 'package:flutter/services.dart';
+import 'dart:ffi';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:native_add/native_add.dart';
+import 'package:native_add/bridge_generated.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('native_add');
-
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
-    });
-  });
+  late final dylib = Platform.isAndroid
+      ? DynamicLibrary.open('libnative_add.so')
+      : DynamicLibrary.process();
 
-  tearDown(() {
-    channel.setMockMethodCallHandler(null);
-  });
+  late final api = NativeAdd(dylib);
 
-  test('getPlatformVersion', () async {
-    expect(await NativeAdd.platformVersion, '42');
+  test('2 + 2 is 4', () async {
+    final twoPlusTwo = await api.add(left: 2, right: 2);
+    expect(twoPlusTwo, '2 + 2 = 42');
   });
 }
