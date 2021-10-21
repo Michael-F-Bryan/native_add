@@ -21,3 +21,10 @@ $ flutter_rust_bridge_codegen \
     --c-output ios/Classes/bridge_generated.h
 ```
 
+This will create three files:
+
+- `rust/src/bridge_generated.rs` - some glue code on the Rust side
+- `lib/bridge_generated.dart` - some Dart classes for dynamically loading the
+  Rust code from a shared library and calling its functions
+- `ios/Classes/bridge_generated.h` - declarations for the functions from
+  our Rust glue code
